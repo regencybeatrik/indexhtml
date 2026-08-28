@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vixzz · Saran & Bug Report</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* ===== RESET & ROOT ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --white: #fff;
+            --black: #0a0a0a;
+            --glass: rgba(10, 10, 10, 0.65);
+            --glass-bd: rgba(255, 255, 255, 0.08);
+            --text: #f5f5f5;
+            --muted: rgba(255, 255, 255, 0.40);
+            --r: 24px;
+            --r-sm: 16px;
+            --r-xs: 12px;
+            --font: 'Inter', system-ui, sans-serif;
+            --purple: #a78bfa;
+            --purple-dark: #7c3eda;
+            --purple-light: #c4b5fd;
+            --purple-glow: rgba(167, 139, 250, 0.4);
+            --purple-bg: rgba(167, 139, 250, 0.12);
+            --purple-gradient: linear-gradient(135deg, #7c3eda, #a78bfa);
+            --green: #4ade80;
+            --red: #f87171;
+            --yellow: #facc15;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: url('https://files.catbox.moe/7h3xkt.jpg') center/cover no-repeat;
+            filter: blur(20px) brightness(0.25) saturate(0.7);
+            transform: scale(1.1);
+        }
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
+        }
+
+        /* ===== WRAPPER ===== */
+        .wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 16px 16px 48px;
+        }
+
+        /* ===== GLASS ===== */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(28px) saturate(1.4);
+            -webkit-backdrop-filter: blur(28px) saturate(1.4);
+            border: 1px solid var(--glass-bd);
+            border-radius: var(--r);
+            box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+        }
+
+        /* ===== ANIMASI SCROLL ===== */
+        [data-s] {
+            opacity: 0;
+            transform: translateY(30px) scale(0.96);
+            will-change: opacity, transform;
+            transition: opacity 0.7s cubic-bezier(0.34, 1.2, 0.64, 1), transform 0.7s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+        [data-s].in {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            margin-top: 14px;
+            padding: 32px 20px 28px;
+            text-align: center;
+        }
+        .av-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+        .av-ring {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(var(--purple) 0%, var(--purple-dark) 40%, #555 70%, var(--purple) 100%);
+            animation: spin 6s linear infinite;
+            z-index: 0;
+        }
+        .av-ring::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: #0a0a0a;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .av-img {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            z-index: 1;
+            display: block;
+            border: 2px solid #1a1a1a;
+            box-shadow: 0 0 40px var(--purple-glow);
+        }
+        .h-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: var(--purple-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        .h-tag {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===== STATUS BOT ===== */
+        .bot-status {
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .bot-status .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .bot-status .status-dot.online {
+            background: var(--green);
+        }
+        .bot-status .status-dot.offline {
+            background: var(--red);
+            animation: none;
+        }
+        .bot-status .status-dot.checking {
+            background: var(--yellow);
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        /* ===== FORM ===== */
+        .form-card {
+            padding: 24px 20px;
+            margin-top: 16px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .form-label i {
+            color: var(--purple);
+            margin-right: 6px;
+        }
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--r-sm);
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: var(--font);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px var(--purple-glow);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-select option {
+            background: #1a1a1a;
+            color: var(--text);
+        }
+        .form-file-wrapper {
+            position: relative;
+            padding: 16px;
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: var(--r-sm);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .form-file-wrapper:hover {
+            border-color: var(--purple);
+            background: var(--purple-bg);
+        }
+        .form-file-wrapper input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .form-file-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .form-file-label i {
+            font-size: 2rem;
+            color: var(--purple);
+        }
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--purple-light);
+            display: none;
+        }
+        .file-name.show {
+            display: block;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--purple-gradient);
+            border: none;
+            border-radius: var(--r-sm);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 32px var(--purple-glow);
+        }
+        .btn-submit:active {
+            transform: scale(0.97);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-submit .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .btn-submit.loading .spinner {
+            display: inline-block;
+        }
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 24px;
+            border-radius: var(--r-sm);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 999;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+            max-width: 90%;
+            text-align: center;
+            pointer-events: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            min-width: 280px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.success {
+            border-color: var(--green);
+            box-shadow: 0 8px 32px rgba(74, 222, 128, 0.2);
+        }
+        .toast.error {
+            border-color: var(--red);
+            box-shadow: 0 8px 32px rgba(248, 113, 113, 0.2);
+        }
+        .toast.info {
+            border-color: var(--yellow);
+            box-shadow: 0 8px 32px rgba(250, 204, 21, 0.2);
+        }
+        .toast i {
+            margin-right: 10px;
+        }
+        .toast.success i {
+            color: var(--green);
+        }
+        .toast.error i {
+            color: var(--red);
+        }
+        .toast.info i {
+            color: var(--yellow);
+        }
+        .toast .toast-detail {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        /* ===== REDLINE ===== */
+        .redline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--purple-gradient);
+            z-index: 300;
+            transform-origin: left;
+            transform: scaleX(0);
+            box-shadow: 0 0 24px var(--purple-glow);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 22px 0 0;
+        }
+        .ft-txt {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.12);
+            text-transform: uppercase;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .wrap {
+                padding: 0 12px 32px;
+            }
+            .header {
+                padding: 24px 16px 20px;
+            }
+            .form-card {
+                padding: 18px 14px;
+            }
+            .toast {
+                min-width: auto;
+                width: 90%;
+                font-size: 0.8rem;
+                padding: 14px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== BACKGROUND ===== -->
+    <div class="bg"></div>
+    <div class="bg-overlay"></div>
+    <div class="redline" id="rl"></div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================ -->
+    <!-- ===== HTML ===== -->
+    <!-- ============================================================ -->
+    <div class="wrap">
+
+        <!-- HEADER -->
+        <div class="header glass" data-s>
+            <div class="av-wrap">
+                <div class="av-ring"></div>
+                <img class="av-img" src="https://files.catbox.moe/dpv63b.jpg" alt="vixzz"
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22108%22 height=%22108%22><rect width=%22108%22 height=%22108%22 rx=%2254%22 fill=%22%23333%22/><text x=%2254%22 y=%2268%22 font-size=%2238%22 text-anchor=%22middle%22 fill=%22white%22 font-weight=%22bold%22>V</text></svg>'"/>
+            </div>
+            <div class="h-name">Kirim Saran dan Laporan Bug</div>
+            <div class="h-tag">Pesan akan dikirim via Telegram</div>
+            <div class="bot-status" id="botStatus">
+                <span class="status-dot checking" id="statusDot"></span>
+                <span id="statusText">Mengecek koneksi...</span>
+            </div>
+        </div>
+
+        <!-- ===== FORM ===== -->
+        <div class="form-card glass" data-s>
+            <form id="reportForm" enctype="multipart/form-data">
+                <!-- Tipe Laporan -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-tag"></i> Tipe</label>
+                    <select class="form-select" id="reportType" required>
+                        <option value="saran">Saran / Masukan</option>
+                        <option value="bug">Laporan Bug</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <!-- Nama Pengirim -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-user"></i> Nama / Username</label>
+                    <input class="form-input" type="text" id="senderName" placeholder="Nama atau username Telegram" required />
+                </div>
+
+                <!-- Pesan -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-comment"></i> Pesan</label>
+                    <textarea class="form-textarea" id="message" placeholder="Tulis saran atau laporan bug secara detail..." required></textarea>
+                </div>
+
+                <!-- Upload Foto -->
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-image"></i> Lampiran Foto (Opsional)</label>
+                    <div class="form-file-wrapper">
+                        <input type="file" id="photoFile" accept="image/*" />
+                        <div class="form-file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Klik atau seret untuk upload foto</span>
+                            <span style="font-size:0.65rem; opacity:0.5;">Max 5MB - JPG, PNG, GIF</span>
+                        </div>
+                        <div class="file-name" id="fileName">File: <span id="fileNameText"></span></div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button class="btn-submit" type="submit" id="submitBtn">
+                    <span class="btn-text"><i class="fas fa-paper-plane"></i> Kirim Laporan</span>
+                    <span class="spinner"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer" data-s>
+            <div class="ft-txt">vixzz - Report System</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ============================================================ -->
+    <script>
+        (function() {
+            // ===== KONFIGURASI TELEGRAM =====
+            const BOT_TOKEN = '8795573697:AAHYQzNbepg2wn0MxjL-ivLo2luki9_ldBo';
+            const OWNER_ID = '8819277205';
+
+            // ===== ELEMEN =====
+            const form = document.getElementById('reportForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const toast = document.getElementById('toast');
+            const fileInput = document.getElementById('photoFile');
+            const fileName = document.getElementById('fileName');
+            const fileNameText = document.getElementById('fileNameText');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+
+            let toastTimeout = null;
+            let isBotOnline = false;
+
+            // ===== CEK KONEKSI BOT =====
+            async function checkBotConnection() {
+                try {
+                    statusDot.className = 'status-dot checking';
+                    statusText.textContent = 'Mengecek koneksi...';
+
+                    const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getMe`, {
+                        method: 'GET',
+                        timeout: 10000
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.ok) {
+                            isBotOnline = true;
+                            statusDot.className = 'status-dot online';
+                            statusText.textContent = 'Bot Online - Siap menerima laporan';
+                            return true;
+                        }
+                    }
+                    throw new Error('Bot tidak merespon');
+                } catch (error) {
+                    isBotOnline = false;
+                    statusDot.className = 'status-dot offline';
+                    statusText.textContent = 'Bot Offline - Periksa token atau koneksi';
+                    console.error('Bot check error:', error);
+                    return false;
+                }
+            }
+
+            // ===== CEK SAAT LOAD =====
+            checkBotConnection();
+
+            // ===== FILE NAME DISPLAY =====
+            fileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    fileNameText.textContent = this.files[0].name;
+                    fileName.classList.add('show');
+                } else {
+                    fileName.classList.remove('show');
+                }
+            });
+
+            // ===== TOAST FUNCTION =====
+            function showToast(message, type = 'success', detail = '') {
+                if (toastTimeout) {
+                    clearTimeout(toastTimeout);
+                    toast.classList.remove('show', 'success', 'error', 'info');
+                }
+
+                const iconMap = {
+                    'success': 'fa-check-circle',
+                    'error': 'fa-exclamation-circle',
+                    'info': 'fa-info-circle'
+                };
+
+                toast.innerHTML = `
+                    <i class="fas ${iconMap[type] || 'fa-info-circle'}"></i> 
+                    ${message}
+                    ${detail ? `<span class="toast-detail">${detail}</span>` : ''}
+                `;
+                toast.className = `toast ${type}`;
+
+                void toast.offsetWidth;
+                toast.classList.add('show');
+
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 6000);
+            }
+
+            // ===== UPLOAD KE TELEGRAM =====
+            async function uploadToTelegram(file) {
+                const formData = new FormData();
+                formData.append('chat_id', OWNER_ID);
+                formData.append('photo', file);
+
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.description || 'Gagal upload foto');
+                }
+
+                return data;
+            }
+
+            // ===== KIRIM PESAN TEKS =====
+            async function sendTextMessage(text) {
+                const params = new URLSearchParams({
+                    chat_id: OWNER_ID,
+                    text: text,
+                    parse_mode: 'HTML'
+                });
+
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?${params}`, {
+                    method: 'GET'
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.ok) {
+                    throw new Error(data.description || 'Gagal kirim pesan');
+                }
+
+                return data;
+            }
+
+            // ===== HANDLE FORM SUBMIT =====
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Cek koneksi bot dulu
+                const isOnline = await checkBotConnection();
+                if (!isOnline) {
+                    showToast(
+                        'Bot Telegram tidak terhubung',
+                        'error',
+                        'Periksa token bot atau koneksi internet'
+                    );
+                    return;
+                }
+
+                const type = document.getElementById('reportType').value;
+                const name = document.getElementById('senderName').value.trim();
+                const message = document.getElementById('message').value.trim();
+                const file = fileInput.files[0];
+
+                if (!name) {
+                    showToast('Nama wajib diisi', 'error', 'Masukkan nama atau username kamu');
+                    document.getElementById('senderName').focus();
+                    return;
+                }
+                if (!message) {
+                    showToast('Pesan wajib diisi', 'error', 'Tulis saran atau laporan bug');
+                    document.getElementById('message').focus();
+                    return;
+                }
+
+                // Disable button
+                submitBtn.disabled = true;
+                submitBtn.classList.add('loading');
+                showToast('Mengirim laporan...', 'info', 'Mohon tunggu sebentar');
+
+                const typeLabel = {
+                    'saran': 'Saran / Masukan',
+                    'bug': 'Laporan Bug',
+                    'lainnya': 'Lainnya'
+                };
+
+                try {
+                    const timestamp = new Date().toLocaleString('id-ID', {
+                        timeZone: 'Asia/Jakarta',
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+
+                    const reportText = `
+        <b>LAPORAN BARU</b>
+        <b>================</b>
+
+        <b>Tipe:</b> ${typeLabel[type]}
+        <b>Pengirim:</b> ${name}
+        <b>Waktu:</b> ${timestamp}
+
+        <b>Pesan:</b>
+        ${message}
+
+        <b>================</b>
+        <i>Dikirim dari Web Report System</i>
+        `;
+
+                    // Kirim pesan teks
+                    const textResult = await sendTextMessage(reportText);
+                    console.log('Pesan teks terkirim:', textResult);
+
+                    // Kirim foto jika ada
+                    let photoResult = null;
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            throw new Error('Ukuran foto maksimal 5MB');
+                        }
+                        photoResult = await uploadToTelegram(file);
+                        console.log('Foto terkirim:', photoResult);
+                    }
+
+                    // Success
+                    let successMsg = 'Laporan berhasil dikirim!';
+                    let successDetail = 'Pesan sudah masuk ke Telegram owner';
+                    if (file) {
+                        successDetail += ' + foto terkirim';
+                    }
+                    showToast(successMsg, 'success', successDetail);
+
+                    // Reset form
+                    form.reset();
+                    fileName.classList.remove('show');
+                    fileInput.value = '';
+
+                } catch (error) {
+                    console.error('Error detail:', error);
+                    let errorMsg = 'Gagal mengirim laporan';
+                    let errorDetail = error.message || 'Coba lagi nanti';
+
+                    // Error spesifik
+                    if (error.message.includes('bot')) {
+                        errorMsg = 'Bot Telegram bermasalah';
+                        errorDetail = 'Periksa token bot atau coba lagi nanti';
+                    } else if (error.message.includes('foto')) {
+                        errorMsg = 'Gagal upload foto';
+                        errorDetail = error.message;
+                    } else if (error.message.includes('network')) {
+                        errorMsg = 'Koneksi internet bermasalah';
+                        errorDetail = 'Periksa koneksi dan coba lagi';
+                    }
+
+                    showToast(errorMsg, 'error', errorDetail);
+
+                    // Cek ulang status bot
+                    await checkBotConnection();
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                }
+            });
+
+            // ===== CEK BOT SETIAP 30 DETIK =====
+            setInterval(checkBotConnection, 30000);
+
+            // ===== INTERSECTION OBSERVER =====
+            const els = document.querySelectorAll('[data-s]');
+            const io = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            els.forEach(el => io.observe(el));
+
+            // ===== REDLINE SCROLL =====
+            const rl = document.getElementById('rl');
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (ticking) return;
+                ticking = true;
+                requestAnimationFrame(() => {
+                    const doc = document.documentElement;
+                    const max = doc.scrollHeight - doc.clientHeight;
+                    rl.style.transform = 'scaleX(' + (max > 0 ? doc.scrollTop / max : 0) + ')';
+                    ticking = false;
+                });
+            }, { passive: true });
+
+            // ===== DRAG & DROP SUPPORT =====
+            const dropZone = document.querySelector('.form-file-wrapper');
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'var(--purple)';
+                dropZone.style.background = 'var(--purple-bg)';
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
+                dropZone.style.background = 'rgba(255,255,255,0.03)';
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'rgba(255,255,255,0.15)';
+                dropZone.style.background = 'rgba(255,255,255,0.03)';
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    const event = new Event('change');
+                    fileInput.dispatchEvent(event);
+                }
+            });
+
+            // ===== TOMBOL CEK ULANG STATUS =====
+            statusText.addEventListener('click', function() {
+                checkBotConnection();
+                showToast('Mengecek ulang koneksi bot...', 'info');
+            });
+            statusText.style.cursor = 'pointer';
+
+        })();
+    </script>
+
+</body>
+</html>
